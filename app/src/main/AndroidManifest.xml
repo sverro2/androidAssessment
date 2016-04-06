@@ -2,16 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="nl.seventho.androidassessment">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".PokemonListActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".PokemonViewer">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -19,21 +18,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".PokemonDetailActivity"
-            android:label="@string/title_pokemon_detail"
-            android:parentActivityName=".PokemonListActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="nl.seventho.androidassessment.PokemonListActivity" />
-        </activity>
+            android:name="nl.seventho.androidassessment.DetailActivity"
+            android:label="@string/app_name" />
         <activity
-            android:name=".SettingsActivity"
+            android:name="nl.seventho.androidassessment.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".PokemonListActivity">
+            android:parentActivityName=".PokemonViewer">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="nl.seventho.androidassessment.PokemonListActivity" />
+                android:value="nl.seventho.androidassessment.DetailActivity" />
         </activity>
     </application>
 

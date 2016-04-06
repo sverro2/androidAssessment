@@ -1,6 +1,8 @@
 <resources>
-    <string name="app_name">AndroidAssessment</string>
-    <string name="title_pokemon_detail">Pokemon Detail</string>
+    <string name="app_name">Pikemon Viewer</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
