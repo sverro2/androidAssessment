@@ -23,6 +23,10 @@ public class PokemonViewer extends AppCompatActivity implements PokemonListFragm
                         SettingsActivity.class);
                 startActivityForResult(intent, 1);
                 break;
+            case R.id.action_refresh:
+                finish();
+                startActivity(getIntent());
+                break;
             default:
                 break;
         }
@@ -33,11 +37,11 @@ public class PokemonViewer extends AppCompatActivity implements PokemonListFragm
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_rssreader);
+        setContentView(R.layout.activity_pokemon);
     }
 
     @Override
-    public void onRssItemSelected(String link) {
+    public void onPokemonSelected(String link) {
         boolean dual_pane = getResources().getBoolean(R.bool.dual_pane);
         if (dual_pane) {
             DetailFragment fragment = (DetailFragment) getSupportFragmentManager()
