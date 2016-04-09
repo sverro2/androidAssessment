@@ -48,17 +48,13 @@ public class DetailFragment extends Fragment {
     private NetworkImageView pokemonSprite;
     private BitmapLruCache bitmapCache;
     private ImageLoader imageLoader;
-    private String dataToSent = "";
-    private String dataToShow = "";
 
     // Progress dialog
     private ProgressDialog pDialog;
 
     //what to sent?
-    private boolean id;
-    private boolean height;
-    private boolean base_exp;
-    private String sender;
+    private Settings settings;
+    private Pokemon detailPokemon;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -80,7 +76,8 @@ public class DetailFragment extends Fragment {
         imageLoader = new ImageLoader(Volley.newRequestQueue(getContext()),bitmapCache);
         pokemonSprite = (NetworkImageView) view.findViewById(R.id.pokemonSprite);
 
-        getUserDefaults();
+        settings = new Settings(PreferenceManager.getDefaultSharedPreferences(getContext()));
+        detailPokemon = new Pokemon();
 
         sentPokemonDataButton.setOnClickListener(new View.OnClickListener() {
 
@@ -98,7 +95,7 @@ public class DetailFragment extends Fragment {
                     //in catch block will be called
                     waIntent.setPackage("com.whatsapp");
 
-                    waIntent.putExtra(Intent.EXTRA_TEXT, dataToSent);
+                    waIntent.putExtra(Intent.EXTRA_TEXT, generateStringToSent());
                     startActivity(Intent.createChooser(waIntent, "Pokemon delen"));
 
                 } catch (PackageManager.NameNotFoundException e) {
@@ -130,33 +127,27 @@ public class DetailFragment extends Fragment {
             public void onResponse(JSONObject response) {
 
                 try {
-                    dataToSent = "A " + sender +  " wishes to expand your pokemon knowledge.\n";
                     // add pokemon id
                     String id = response.getString("id");
-                    addDataToShow("Id", id);
-                    addDataToSentVar("Id", id);
+                    detailPokemon.setId(id);
 
                     // add pokemon name
                     String name = response.getString("name");
-                    addDataToShow("Name", name);
-                    addDataToSentVar("Name", name);
+                    detailPokemon.setName(name);
 
                     // add pokemon height
                     String height = response.getString("height");
-                    addDataToShow("Height", height);
-                    addDataToSentVar("Height", height);
+                    detailPokemon.setHeight(height);
 
-                    // add pokemon weight
+                    // add pokemon experience
                     String experience = response.getString("base_experience");
-                    addDataToShow("Base Exp.", experience);
-                    addDataToSentVar("Base Exp.", experience);
+                    detailPokemon.setBaseExp(experience);
 
                     // show data
-                    pokemonDetail.setText(dataToShow);
+                    pokemonDetail.setText(generateStringToShow());
 
                     //show sprite
                     JSONObject sprites = response.getJSONObject("sprites");
-                    Log.v(TAG, sprites.toString());
                     String spriteURL = sprites.getString("front_default");
                     pokemonSprite.setImageUrl(spriteURL, imageLoader);
 
@@ -199,28 +190,38 @@ public class DetailFragment extends Fragment {
             pDialog.dismiss();
     }
 
-    private void addDataToSentVar(String key, String value){
-        switch (key){
-            case "Id":
-                if (!id) return;
-            case "Height":
-                if (!height) return;
-            case "Base Exp.":
-                if (!base_exp) return;
+    public String generateStringToSent(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("A " + settings.getSender() +  " wishes to expand your pokemon knowledge.\n");
+
+        if(settings.isIdEnabled()){
+            sb.append(generateBulletPointString("Id", detailPokemon.getId()));
         }
 
-        dataToSent += "- " + key + ": " + value + "\n";
+        //always add name
+        sb.append(generateBulletPointString("Name", detailPokemon.getName()));
+
+        if (settings.isHeightEnabled()) {
+            sb.append(generateBulletPointString("Height", detailPokemon.getHeight()));
+        }
+
+        if (settings.isBase_expEnabled()){
+            sb.append(generateBulletPointString("Base Exp.:", detailPokemon.getBaseExp()));
+        }
+        return sb.toString();
     }
 
-    private void addDataToShow(String key, String value){
-        dataToShow += "- " + key + ": " + value + "\n";
+    public String generateStringToShow(){
+        StringBuilder sb = new StringBuilder();
+        sb.append(generateBulletPointString("Id", detailPokemon.getId()));
+        sb.append(generateBulletPointString("Name", detailPokemon.getName()));
+        sb.append(generateBulletPointString("Height", detailPokemon.getHeight()));
+        sb.append(generateBulletPointString("Base Experience", detailPokemon.getBaseExp()));
+        return  sb.toString();
     }
 
-    private void getUserDefaults(){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        id = prefs.getBoolean("switch_id", true);
-        height = prefs.getBoolean("switch_height", true);
-        base_exp = prefs.getBoolean("switch_base_xp", true);
-        sender = prefs.getString("friends_list", "Friend");
+    public String generateBulletPointString(String key, String value){
+        return "- " + key + ": " + value + "\n";
+
     }
 }

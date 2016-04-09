@@ -57,9 +57,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                                 ? listPreference.getEntries()[index]
                                 : null);
 
-            } else if (preference instanceof RingtonePreference) {
-
-
             } else {
                 // For all other preferences, set the summary to the value's
                 // simple string representation.
